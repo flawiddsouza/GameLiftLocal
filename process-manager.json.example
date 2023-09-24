@@ -1,0 +1,6 @@
+{
+  "workingDir": "/home/user/repos/game-repo/GameServer",
+  "command": "bin/Release/net7.0/linux-x64/game-server",
+  "commandArgs": [],
+  "processCount": 20
+}

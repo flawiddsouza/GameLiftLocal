@@ -1,0 +1,59 @@
+/*! minireset.css v0.0.6 | MIT License | github.com/jgthms/minireset.css */html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select{margin:0}html{box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}img,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0}
+
+/* our styles */
+
+[v-cloak] {
+  display: none;
+}
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}
+
+button {
+  background-color: #673ab7;
+  border: 0;
+  color: white;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  font: inherit;
+}
+
+button:hover {
+  background-color: #5a2ea6;
+}
+
+input {
+  border: 1px solid #ddd;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  font: inherit;
+}
+
+.w-100p {
+  width: 100%;
+}
+
+.m-1rem {
+  margin: 1rem;
+}
+
+.mt-1rem {
+  margin-top: 1rem;
+}

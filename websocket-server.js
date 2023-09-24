@@ -1,7 +1,9 @@
 import wss from 'uWebSockets.js';
 
-export function createWebSocketServer({ port, onopen, onmessage, onclose }) {
+export function createWebSocketServer({ port, onopen, onmessage, onclose, routes }) {
   const app = wss.App();
+  let id = 0;
+  const clients = new Map();
 
   app.ws('/*', {
     upgrade: (res, req, context) => {
@@ -14,12 +16,15 @@ export function createWebSocketServer({ port, onopen, onmessage, onclose }) {
       );
     },
     open: (ws) => {
+      ws.id = ++id;
+      clients.set(id, ws);
       onopen(ws);
     },
     message: (ws, message) => {
       onmessage(ws, message);
     },
     close: (ws, code) => {
+      clients.delete(ws.id);
       onclose(ws, code);
     }
   });
@@ -28,13 +33,22 @@ export function createWebSocketServer({ port, onopen, onmessage, onclose }) {
     res.end('Nothing to see here!');
   });
 
+  routes.forEach(({ path, method, handler }) => {
+    app[method.toLowerCase()](path, handler);
+  });
+
   app.listen(port, (listenSocket) => {
     if (listenSocket) {
+      console.log(`HTTP Server listening on http://localhost:${port}`);
       console.log(`WebSocket Server listening on ws://localhost:${port}`);
     } else {
-      console.log(`WebSocket Server failed to listen to port ${port}`);
+      console.log(`Failed to listen to port ${port}`);
     }
   });
+
+  return {
+    clients
+  };
 }
 
 export function send(ws, response) {
