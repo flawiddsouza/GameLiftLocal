@@ -16,5 +16,5 @@ interface GameProcess {
 type uWebSocket = import('uWebSockets.js').WebSocket<any>;
 
 interface CustomWebSocket extends uWebSocket {
-  id: number;
+  id: string;
 }

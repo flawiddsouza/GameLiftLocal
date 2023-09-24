@@ -1,8 +1,8 @@
 import * as wss from 'uWebSockets.js';
+import { randomUUID } from 'crypto';
 
 export function createWebSocketServer({ port, onopen, onmessage, onclose, routes }) {
   const app = wss.App();
-  let id = 0;
   const clients = new Map();
 
   app.ws('/*', {
@@ -17,8 +17,8 @@ export function createWebSocketServer({ port, onopen, onmessage, onclose, routes
     },
     /** @param {CustomWebSocket} ws */
     open: (ws) => {
-      ws.id = ++id;
-      clients.set(id, ws);
+      ws.id = randomUUID();
+      clients.set(ws.id, ws);
       onopen(ws);
     },
     message: (ws, message) => {
