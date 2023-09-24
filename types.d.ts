@@ -17,4 +17,11 @@ type uWebSocket = import('uWebSockets.js').WebSocket<any>;
 
 interface CustomWebSocket extends uWebSocket {
   id: string;
+  query: { [key: string]: string };
+}
+
+interface Route {
+  method: string;
+  path: string;
+  handler(res: any, req: any): void;
 }

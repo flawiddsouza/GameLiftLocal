@@ -67,7 +67,7 @@ createWebSocketServer({
     {
       method: 'GET',
       path: '/',
-      handler: (res, req) => {
+      handler(res, req) {
         const html = readFileSync('./public/index.html');
         res.end(html);
       }
@@ -75,7 +75,7 @@ createWebSocketServer({
     {
       method: 'GET',
       path: '/public/main.js',
-      handler: (res, req) => {
+      handler(res, req) {
         const html = readFileSync('./public/main.js');
         res.writeHeader('Content-Type', 'application/javascript');
         res.end(html);
@@ -84,7 +84,7 @@ createWebSocketServer({
     {
       method: 'GET',
       path: '/public/vue@3.3.4-esm-browser.js',
-      handler: (res, req) => {
+      handler(res, req) {
         const html = readFileSync('./public/vue@3.3.4-esm-browser.js');
         res.writeHeader('Content-Type', 'application/javascript');
         res.end(html);
@@ -93,7 +93,7 @@ createWebSocketServer({
     {
       method: 'GET',
       path: '/public/main.css',
-      handler: (res, req) => {
+      handler(res, req) {
         const html = readFileSync('./public/main.css');
         res.writeHeader('Content-Type', 'text/css');
         res.end(html);
