@@ -2,6 +2,7 @@ import { createWebSocketServer, send } from './websocket-server.js';
 import * as gamelift from './gamelift.js';
 import { readFileSync } from 'fs';
 
+/** @type {Object.<string, GameProcess>} */
 const gameProcesses = {};
 
 createWebSocketServer({

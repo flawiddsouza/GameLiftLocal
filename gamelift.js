@@ -6,10 +6,19 @@ const baseMessageSchema = {
   RequestId: string(),
 };
 
+/**
+ * @param {string} functionName
+ * @param {import('valibot').ValiError} error
+ * @returns {void}
+ */
 function handleValidationError(functionName, error) {
   console.log(`${functionName} validation error:`, JSON.stringify(error.issues, null, 2));
 }
 
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ */
 export function handleActivateServerProcess(receivedMessage, gameProcess) {
   const messageSchema = object({
     ...baseMessageSchema,
@@ -29,6 +38,10 @@ export function handleActivateServerProcess(receivedMessage, gameProcess) {
   }
 }
 
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ */
 export function handleGetFleetRoleCredentials(receivedMessage, gameProcess) {
   const messageSchema = object({
     ...baseMessageSchema,
@@ -59,6 +72,10 @@ export function handleGetFleetRoleCredentials(receivedMessage, gameProcess) {
   }
 }
 
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ */
 export function handleHeartbeatServerProcess(receivedMessage, gameProcess) {
   const messageSchema = object({
     ...baseMessageSchema,
@@ -80,6 +97,11 @@ export function handleHeartbeatServerProcess(receivedMessage, gameProcess) {
   }
 }
 
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ * @param {Object.<string, GameProcess>} gameProcesses
+ */
 export function handleCreateGameSession(receivedMessage, gameProcess, gameProcesses) {
   const messageSchema = object({
     ...baseMessageSchema,
@@ -132,6 +154,10 @@ export function handleCreateGameSession(receivedMessage, gameProcess, gameProces
   }
 }
 
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ */
 export function handleActivateGameSession(receivedMessage, gameProcess) {
   const messageSchema = object({
     ...baseMessageSchema,

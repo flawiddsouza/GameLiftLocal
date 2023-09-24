@@ -3,13 +3,16 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.31.0",
     "valibot": "^0.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@types/node": "^20.6.4",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.2.2"
   }
 }

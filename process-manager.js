@@ -1,8 +1,8 @@
 import { spawn } from 'child_process';
 import { readFileSync } from 'fs';
 
-let processManager = readFileSync('./process-manager.json', 'utf8');
-processManager = JSON.parse(processManager);
+/** @type {{ processCount: number, workingDir: string, command: string, commandArgs: string[] }} */
+const processManager = JSON.parse(readFileSync('./process-manager.json', 'utf8'));
 
 const numProcesses = processManager.processCount;
 

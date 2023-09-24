@@ -1,4 +1,4 @@
-import wss from 'uWebSockets.js';
+import * as wss from 'uWebSockets.js';
 
 export function createWebSocketServer({ port, onopen, onmessage, onclose, routes }) {
   const app = wss.App();
@@ -15,6 +15,7 @@ export function createWebSocketServer({ port, onopen, onmessage, onclose, routes
         context
       );
     },
+    /** @param {CustomWebSocket} ws */
     open: (ws) => {
       ws.id = ++id;
       clients.set(id, ws);
@@ -23,6 +24,7 @@ export function createWebSocketServer({ port, onopen, onmessage, onclose, routes
     message: (ws, message) => {
       onmessage(ws, message);
     },
+    /** @param {CustomWebSocket} ws */
     close: (ws, code) => {
       clients.delete(ws.id);
       onclose(ws, code);
