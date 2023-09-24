@@ -190,7 +190,69 @@ export function handleActivateGameSession(receivedMessage, gameProcess) {
     const validatedMessage = validate(messageSchema, receivedMessage);
 
     gameProcess.gameSessionActivated = true;
+
+    // we don't send a response because gamelift sdk seems to not expect one
   } catch (error) {
     handleValidationError('handleActivateGameSession', error);
+  }
+}
+
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ */
+export function handleAcceptPlayerSession(receivedMessage, gameProcess) {
+  const messageSchema = object({
+    ...baseMessageSchema,
+    GameSessionId: string(),
+    PlayerSessionId: string(),
+  });
+
+  try {
+    const validatedMessage = validate(messageSchema, receivedMessage);
+
+    // we don't send a response because gamelift sdk seems to not expect one
+  } catch (error) {
+    handleValidationError('handleAcceptPlayerSession', error);
+  }
+}
+
+/**
+ * @param {object} receivedMessage
+ * @param {GameProcess} gameProcess
+ * @param {Object.<string, GameSession>} gameSessions
+ */
+export function handleDescribePlayerSessions(receivedMessage, gameProcess, gameSessions) {
+  const messageSchema = object({
+    ...baseMessageSchema,
+    GameSessionId: string(),
+    PlayerSessionId: string(),
+    PlayerId: string(),
+    PlayerSessionStatusFilter: string(),
+    NextToken: string(),
+    Limit: number(),
+  });
+
+  try {
+    const validatedMessage = validate(messageSchema, receivedMessage);
+
+    const playerSession = gameSessions[validatedMessage.GameSessionId].playerSessions.find(playerSession => playerSession.playerId === validatedMessage.PlayerId);
+
+    const describePlayerSessions = {
+      Action: 'DescribePlayerSessions',
+      StatusCode: 200,
+      RequestId: validatedMessage.RequestId,
+      Data: {
+        PlayerSessions: [
+          playerSession
+        ],
+        // make sure if NextToken is needed or not for sdk to work
+        NextToken: null,
+      },
+    };
+
+    gameProcess.send(describePlayerSessions);
+  } catch (error) {
+    handleValidationError('handleDescribePlayerSessions', error);
   }
 }

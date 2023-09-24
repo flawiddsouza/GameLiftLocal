@@ -45,6 +45,7 @@ const app = createApp({
             <thead>
               <tr>
                 <th>Player ID</th>
+                <th>Player Data</th>
               </tr>
             </thead>
             <tbody>
@@ -96,7 +97,7 @@ const app = createApp({
       this.gameProperties.push({ key: '', value: '' });
     },
     addPlayerSession() {
-      this.playerSessions.push({ playerId: '' });
+      this.playerSessions.push({ playerId: '', playerData: '' });
     },
     createGameSession() {
       ws.send(JSON.stringify({

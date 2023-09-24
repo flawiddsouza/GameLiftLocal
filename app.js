@@ -62,6 +62,19 @@ createWebSocketServer({
     if (action === 'ActivateGameSession') {
       gamelift.handleActivateGameSession(parsedMessage, gameProcess);
     }
+
+    if (action === 'AcceptPlayerSession') {
+      gamelift.handleAcceptPlayerSession(parsedMessage, gameProcess);
+    }
+
+    if (action === 'RemovePlayerSession') {
+      // TODO: implement
+      // gamelift.handleRemovePlayerSession(parsedMessage, gameProcess);
+    }
+
+    if (action === 'DescribePlayerSessions') {
+      gamelift.handleDescribePlayerSessions(parsedMessage, gameProcess, gameSessions);
+    }
   },
   onclose(ws, code) {
     console.log('client disconnected', ws.id, code);
