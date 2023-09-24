@@ -5,6 +5,9 @@ import { readFileSync } from 'fs';
 /** @type {Object.<string, GameProcess>} */
 const gameProcesses = {};
 
+/** @type {Object<string, GameSession>} */
+const gameSessions = {};
+
 createWebSocketServer({
   port: 9001,
   onopen: (ws) => {
@@ -53,7 +56,7 @@ createWebSocketServer({
     }
 
     if (action === 'CreateGameSession') {
-      gamelift.handleCreateGameSession(parsedMessage, gameProcess, gameProcesses);
+      gamelift.handleCreateGameSession(parsedMessage, gameProcess, gameProcesses, gameSessions);
     }
 
     if (action === 'ActivateGameSession') {

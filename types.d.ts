@@ -25,3 +25,24 @@ interface Route {
   path: string;
   handler(res: any, req: any): void;
 }
+
+interface PlayerSession {
+  playerId?: string;
+  playerData?: string;
+}
+
+interface GameProperties {
+  [key: string]: string;
+}
+
+interface GameSession {
+  gameSessionId: string,
+  gameSessionName: string,
+  gameSessionData: string,
+  maximumPlayerSessionCount: number,
+  ipAddress?: string,
+  port?: number,
+  matchmakerData: '{}',
+  gameProperties: GameProperties,
+  playerSessions: PlayerSession[];
+}

@@ -101,32 +101,54 @@ export function handleHeartbeatServerProcess(receivedMessage, gameProcess) {
  * @param {object} receivedMessage
  * @param {GameProcess} gameProcess
  * @param {Object.<string, GameProcess>} gameProcesses
+ * @param {Object.<string, GameSession>} gameSessions
  */
-export function handleCreateGameSession(receivedMessage, gameProcess, gameProcesses) {
+export function handleCreateGameSession(receivedMessage, gameProcess, gameProcesses, gameSessions) {
   const messageSchema = object({
     ...baseMessageSchema,
     GameProperties: any(),
+    PlayerSessions: array(object({
+      playerId: string(),
+      playerData: string(),
+    })),
   });
 
   try {
     const validatedMessage = validate(messageSchema, receivedMessage);
 
+    const newGameSessionId = randomUUID();
+
+    gameSessions[newGameSessionId] = {
+      gameSessionId: newGameSessionId,
+      gameSessionName: 'game_session_name',
+      gameSessionData: 'game_session_data',
+      maximumPlayerSessionCount: 4,
+      matchmakerData: '{}',
+      gameProperties: validatedMessage.GameProperties,
+      playerSessions: validatedMessage.PlayerSessions,
+    };
+
+    const gameSession = gameSessions[newGameSessionId];
+
     let freeGameProcessFound = null;
 
     for(const process of Object.values(gameProcesses)) {
       if (process.processActivated && process.gameSessionId === null) {
+        gameSession.ipAddress = 'localhost';
+        gameSession.port = process.port;
+
         const createGameSession = {
           Action: 'CreateGameSession',
-          MaximumPlayerSessionCount: 4,
-          Port: process.port,
-          IpAddress: 'localhost',
-          GameSessionId: randomUUID(),
-          GameSessionName: 'game_session_name',
-          GameSessionData: 'game_session_data',
-          MatchmakerData: '{}',
-          GameProperties: validatedMessage.GameProperties,
+          MaximumPlayerSessionCount: gameSession.maximumPlayerSessionCount,
+          Port: gameSession.port,
+          IpAddress: gameSession.ipAddress,
+          GameSessionId: gameSession.gameSessionId,
+          GameSessionName: gameSession.gameSessionName,
+          GameSessionData: gameSession.gameSessionData,
+          MatchmakerData: gameSession.matchmakerData,
+          GameProperties: gameSession.gameProperties,
         };
-        process.gameSessionId = createGameSession.GameSessionId;
+        process.gameSessionId = gameSession.gameSessionId;
         process.send(createGameSession);
         console.log(JSON.stringify(gameProcesses, null, 2));
         freeGameProcessFound = process;
