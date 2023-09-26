@@ -27,8 +27,17 @@ interface Route {
 }
 
 interface PlayerSession {
-  playerId?: string;
-  playerData?: string;
+  PlayerId: string
+  PlayerSessionId: string
+  GameSessionId: string
+  FleetId: string
+  PlayerData: string
+  IpAddress: string
+  Port: number
+  CreationTime: number
+  TerminationTime: number
+  DnsName: string
+  Status: string
 }
 
 interface GameProperties {

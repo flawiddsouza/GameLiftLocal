@@ -1,4 +1,4 @@
-import { number, string, object, array, parse as validate, boolean, any } from 'valibot';
+import { number, string, object, array, parse as validate, boolean, any, nullable } from 'valibot';
 import { randomUUID } from 'crypto';
 
 const baseMessageSchema = {
@@ -56,14 +56,12 @@ export function handleGetFleetRoleCredentials(receivedMessage, gameProcess) {
       Action: 'GetFleetRoleCredentials',
       RequestId: validatedMessage.RequestId,
       StatusCode: 200,
-      Data: {
-        AssumedRoleUserArn: 'dummy',
-        AssumedRoleId: 'dummy',
-        AccessKeyId: 'dummy',
-        SecretAccessKey: 'dummy',
-        SessionToken: 'dummy',
-        Expiration: 0,
-      }
+      AssumedRoleUserArn: 'dummy',
+      AssumedRoleId: 'dummy',
+      AccessKeyId: 'dummy',
+      SecretAccessKey: 'dummy',
+      SessionToken: 'dummy',
+      Expiration: 0,
     };
 
     gameProcess.send(activateServerProcess);
@@ -125,7 +123,19 @@ export function handleCreateGameSession(receivedMessage, gameProcess, gameProces
       maximumPlayerSessionCount: 4,
       matchmakerData: '{}',
       gameProperties: validatedMessage.GameProperties,
-      playerSessions: validatedMessage.PlayerSessions,
+      playerSessions: validatedMessage.PlayerSessions.map(playerSession => ({
+        PlayerId: playerSession.playerId,
+        PlayerSessionId: playerSession.playerId,
+        GameSessionId: newGameSessionId,
+        FleetId: 'fleet_id',
+        PlayerData: playerSession.playerData,
+        IpAddress: 'localhost',
+        Port: 0,
+        CreationTime: Date.now(),
+        TerminationTime: Date.now(),
+        DnsName: 'localhost',
+        Status: 'RESERVED',
+      })),
     };
 
     const gameSession = gameSessions[newGameSessionId];
@@ -150,7 +160,6 @@ export function handleCreateGameSession(receivedMessage, gameProcess, gameProces
         };
         process.gameSessionId = gameSession.gameSessionId;
         process.send(createGameSession);
-        console.log(JSON.stringify(gameProcesses, null, 2));
         freeGameProcessFound = process;
         break;
       }
@@ -168,7 +177,8 @@ export function handleCreateGameSession(receivedMessage, gameProcess, gameProces
         Action: 'CreateGameSession',
         StatusCode: 200,
         RequestId: validatedMessage.RequestId,
-        Data: freeGameProcessFound,
+        Process: freeGameProcessFound,
+        GameSession: gameSession,
       });
     }
   } catch (error) {
@@ -225,30 +235,31 @@ export function handleAcceptPlayerSession(receivedMessage, gameProcess) {
 export function handleDescribePlayerSessions(receivedMessage, gameProcess, gameSessions) {
   const messageSchema = object({
     ...baseMessageSchema,
-    GameSessionId: string(),
+    GameSessionId: nullable(string()),
     PlayerSessionId: string(),
-    PlayerId: string(),
-    PlayerSessionStatusFilter: string(),
-    NextToken: string(),
+    PlayerId: nullable(string()),
+    PlayerSessionStatusFilter: nullable(string()),
+    NextToken: nullable(string()),
     Limit: number(),
   });
 
   try {
     const validatedMessage = validate(messageSchema, receivedMessage);
 
-    const playerSession = gameSessions[validatedMessage.GameSessionId].playerSessions.find(playerSession => playerSession.playerId === validatedMessage.PlayerId);
+    let foundPlayerSession = null;
+
+    for (const gameSession of Object.values(gameSessions)) {
+      foundPlayerSession = gameSession.playerSessions.find(playerSession => playerSession.PlayerSessionId === validatedMessage.PlayerSessionId);
+    }
 
     const describePlayerSessions = {
       Action: 'DescribePlayerSessions',
       StatusCode: 200,
       RequestId: validatedMessage.RequestId,
-      Data: {
-        PlayerSessions: [
-          playerSession
-        ],
-        // make sure if NextToken is needed or not for sdk to work
-        NextToken: null,
-      },
+      PlayerSessions: [
+        foundPlayerSession
+      ],
+      NextToken: null,
     };
 
     gameProcess.send(describePlayerSessions);
