@@ -236,7 +236,7 @@ export function handleDescribePlayerSessions(receivedMessage, gameProcess, gameS
   const messageSchema = object({
     ...baseMessageSchema,
     GameSessionId: nullable(string()),
-    PlayerSessionId: string(),
+    PlayerSessionId: nullable(string()),
     PlayerId: nullable(string()),
     PlayerSessionStatusFilter: nullable(string()),
     NextToken: nullable(string()),
@@ -246,19 +246,33 @@ export function handleDescribePlayerSessions(receivedMessage, gameProcess, gameS
   try {
     const validatedMessage = validate(messageSchema, receivedMessage);
 
-    let foundPlayerSession = null;
+    const playerSessions = [];
 
-    for (const gameSession of Object.values(gameSessions)) {
-      foundPlayerSession = gameSession.playerSessions.find(playerSession => playerSession.PlayerSessionId === validatedMessage.PlayerSessionId);
+    // when game session id is provided and player session id isn't
+    if (validatedMessage.GameSessionId && validatedMessage.PlayerSessionId === null) {
+      const gameSession = gameSessions[validatedMessage.GameSessionId];
+      playerSessions.push(...gameSession.playerSessions);
+    }
+
+    // when player session id is provided and game session id isn't
+    if (validatedMessage.GameSessionId === null && validatedMessage.PlayerSessionId) {
+      let foundPlayerSession = null;
+
+      for (const gameSession of Object.values(gameSessions)) {
+        foundPlayerSession = gameSession.playerSessions.find(playerSession => playerSession.PlayerSessionId === validatedMessage.PlayerSessionId);
+        if (foundPlayerSession) {
+          break;
+        }
+      }
+
+      playerSessions.push(foundPlayerSession);
     }
 
     const describePlayerSessions = {
       Action: 'DescribePlayerSessions',
       StatusCode: 200,
       RequestId: validatedMessage.RequestId,
-      PlayerSessions: [
-        foundPlayerSession
-      ],
+      PlayerSessions: playerSessions,
       NextToken: null,
     };
 
